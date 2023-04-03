@@ -6,57 +6,80 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Diagnostics;
 using System.Reflection.Metadata;
+using GetDataWeb.Migrations;
+using System.Collections.Generic;
 
 namespace GetDataWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //private readonly ILogger<HomeController> _logger;
+        private readonly GetDataFromDBAppContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        //public HomeController(ILogger<HomeController> logger)
+        //{
+        //    _logger = logger;
+        //}
+
+        public HomeController(GetDataFromDBAppContext context)
         {
-            _logger = logger;
+            _context = context;
+        }
+        public async Task<IActionResult> Index()
+        {
+            var parametersData = await _context.GetParametersData();
+
+            return View(parametersData);
         }
 
-        public IActionResult Index()
-        {
-             string connectionString = "Server=DESKTOP-IGTK1UR;Database=Report;Trusted_Connection=True;";
+        //public IActionResult Index()
+        //{
+        //    string connectionString = "Server=DESKTOP-IGTK1UR;Database=Report;Trusted_Connection=True;";
 
-            // List<Parameter> GetMyDataFromStoredProcedure()
-            //{
-            //    string sqlExpression = "monthReport_0007_TechnReport_BODY";
+        //    using (GetDataFromDBAppContext db = new GetDataFromDBAppContext())
+        //    {
+        //        var year = 0;
+        //        var dt = "'2018.01.01'";
+        //        var spModel = db.SPModels.FromSqlInterpolated($"EXEC dbo.monthReport_0007_TechnReport_BODY @dt={dt}, @year={year}").ToList();
+        //        foreach (var spmodel in spModel)
+        //            Console.WriteLine(spmodel.Descr);
+        //    }
 
-            //    List<Parameter> myData = new List<Parameter>();
+        //    // List<Parameter> GetMyDataFromStoredProcedure()
+        //    //{
+        //    //    string sqlExpression = "monthReport_0007_TechnReport_BODY";
 
-            //    using (SqlConnection conn = new SqlConnection(connectionString))
-            //    {
-            //        SqlCommand cmd = new SqlCommand(sqlExpression, conn);
-            //        cmd.CommandType = CommandType.StoredProcedure;
-            //        cmd.Parameters.Add(new SqlParameter("@dt", "2018.01.01"));
-            //        cmd.Parameters.Add(new SqlParameter("@year", 0));
+        //    //    List<Parameter> myData = new List<Parameter>();
 
-            //        conn.Open();
+        //    //    using (SqlConnection conn = new SqlConnection(connectionString))
+        //    //    {
+        //    //        SqlCommand cmd = new SqlCommand(sqlExpression, conn);
+        //    //        cmd.CommandType = CommandType.StoredProcedure;
+        //    //        cmd.Parameters.Add(new SqlParameter("@dt", "2018.01.01"));
+        //    //        cmd.Parameters.Add(new SqlParameter("@year", 0));
 
-            //        string GUID = Guid.NewGuid().ToString();
+        //    //        conn.Open();
 
-            //        using (SqlDataReader reader = cmd.ExecuteReader())
-            //        {
-            //            while (reader.Read())
-            //            {
-            //                Parameter model = new Parameter();
-            //                model.ID_Parameter = Convert.ToString(GUID);
-            //                model.ParameterName = Convert.ToString(reader["Descr"]);
+        //    //        string GUID = Guid.NewGuid().ToString();
 
-            //                myData.Add(model);
-            //            }
-            //        }
-            //    }
+        //    //        using (SqlDataReader reader = cmd.ExecuteReader())
+        //    //        {
+        //    //            while (reader.Read())
+        //    //            {
+        //    //                Parameter model = new Parameter();
+        //    //                model.ID_Parameter = Convert.ToString(GUID);
+        //    //                model.ParameterName = Convert.ToString(reader["Descr"]);
 
-            //    return myData;
-            //}
+        //    //                myData.Add(model);
+        //    //            }
+        //    //        }
+        //    //    }
 
-            return View();
-        }
+        //    //    return myData;
+        //    //}
+
+        //    return View();
+        //}
 
         public IActionResult Privacy()
         {

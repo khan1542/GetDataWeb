@@ -1,8 +1,42 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model List<SPModel>
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Descr</th>
+            <th>sDp1</th>
+            <th>sDp2</th>
+            <th>sDp4</th>
+            <th>sDp6</th>
+            <th>sDp7</th>
+            <th>sDp8</th>
+            <th>sDp9</th>
+            <th>sDp10</th>
+            <th>sDp255</th>
+            <th>sDpBegYear</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Descr</td>
+                <td>@item.sDp1</td>
+                <td>@item.sDp2</td>
+                <td>@item.sDp4</td>
+                <td>@item.sDp6</td>
+                <td>@item.sDp7</td>
+                <td>@item.sDp8</td>
+                <td>@item.sDp9</td>
+                <td>@item.sDp10</td>
+                <td>@item.sDp255</td>
+                <td>@item.sDpBegYear</td>
+            </tr>
+        }
+    </tbody>
+</table>
 </div>

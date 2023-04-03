@@ -1,17 +1,20 @@
-﻿namespace GetDataWeb.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace GetDataWeb.Models
 {
+    [Keyless]
     public class SPModel
     {
         public string Descr { get; set; }
-        public int sDp1 { get; set; }
-        public int sDp2 { get; set; }
-        public int sDp4 { get; set; }
-        public int sDp6 { get; set; }
-        public int sDp7 { get; set; }
-        public int sDp8 { get; set; }
-        public int sDp9 { get; set; }
-        public int sDp10 { get; set; }
-        public int sDp255 { get; set; }
-        public int sDpBegYear { get; set; }
+        public string sDp1 { get; set; }
+        public string sDp2 { get; set; }
+        public string sDp4 { get; set; }
+        public string sDp6 { get; set; }
+        public string sDp7 { get; set; }
+        public string sDp8 { get; set; }
+        public string sDp9 { get; set; }
+        public string sDp10 { get; set; }
+        public string sDp255 { get; set; }
+        public string sDpBegYear { get; set; }
     }
 }
