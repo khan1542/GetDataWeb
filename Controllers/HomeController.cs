@@ -6,30 +6,49 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Diagnostics;
 using System.Reflection.Metadata;
-using GetDataWeb.Migrations;
 using System.Collections.Generic;
 
 namespace GetDataWeb.Controllers
 {
     public class HomeController : Controller
     {
-        //private readonly ILogger<HomeController> _logger;
-        private readonly GetDataFromDBAppContext _context;
+        private readonly SourceDBContext _sourceContext;
+        private readonly DestinationDbContext _destinationContext;
 
-        //public HomeController(ILogger<HomeController> logger)
-        //{
-        //    _logger = logger;
-        //}
+        //public DestinationDbContext DestinationContext => _destinationContext;
 
-        public HomeController(GetDataFromDBAppContext context)
+        //public SourceDBContext SourceContext => _sourceContext;
+
+        public HomeController(SourceDBContext sourceContext, DestinationDbContext destinationContext)
         {
-            _context = context;
+            _sourceContext = sourceContext;
+            _destinationContext = destinationContext;
         }
-        public async Task<IActionResult> Index()
+        
+        public async Task<ActionResult> Index()
         {
-            var parametersData = await _context.GetParametersData();
+            //connection string для БД с хранимкой
+            string connectionString = "Server=DESKTOP-IGTK1UR;Database=Report;Trusted_Connection=True;TrustServerCertificate=true;";
+            string destinationConnectionString = "Server=DESKTOP-IGTK1UR;Database=SPParameters;Trusted_Connection=True;TrustServerCertificate=true;";
+            var reportResults = new List<SPModel>();
 
-            return View(parametersData);
+            using (var sourceDbContext = new SourceDBContext(connectionString))
+            using (var destinationDbContext = new DestinationDbContext())
+            {
+                // Получить результаты хранимки используя FromSqlInterpolated 
+                var year = 0;
+                var dt = "2018.01.01";
+                reportResults = await sourceDbContext.SPModels
+                    .FromSqlInterpolated(($"EXEC dbo.monthReport_0007_TechnReport_BODY @dt='{dt}', @year={year}"))
+                    .ToListAsync();
+
+                // Записать результаты в  DestinationDbContext
+                destinationDbContext.SPModels.AddRange(reportResults);
+
+                await destinationDbContext.SaveChangesAsync();
+            }
+
+            return View();
         }
 
         //public IActionResult Index()

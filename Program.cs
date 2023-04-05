@@ -2,11 +2,17 @@ using GetDataFromDBAppDbContext.Migrations;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-string connectionString = "Server=DESKTOP-IGTK1UR;Database=Report;Trusted_Connection=True;TrustServerCertificate=true;";
+string sourceConnectionString = "Server=DESKTOP-IGTK1UR;Database=Report;Trusted_Connection=True;TrustServerCertificate=true;";
+string destinationConnectionString = "Server=DESKTOP-IGTK1UR;Database=SPParameters;Trusted_Connection=True;TrustServerCertificate=true;";
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<GetDataFromDBAppContext>(options =>
- options.UseSqlServer(connectionString));
+
+builder.Services.AddDbContext<SourceDBContext>(options =>
+ options.UseSqlServer(sourceConnectionString));
+
+builder.Services.AddDbContext<DestinationDbContext>(options =>
+ options.UseSqlServer(destinationConnectionString));
 
 
 var app = builder.Build();
