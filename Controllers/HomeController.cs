@@ -13,11 +13,8 @@ namespace GetDataWeb.Controllers
     public class HomeController : Controller
     {
         private readonly SourceDBContext _sourceContext;
+        
         private readonly DestinationDbContext _destinationContext;
-
-        //public DestinationDbContext DestinationContext => _destinationContext;
-
-        //public SourceDBContext SourceContext => _sourceContext;
 
         public HomeController(SourceDBContext sourceContext, DestinationDbContext destinationContext)
         {
@@ -27,28 +24,36 @@ namespace GetDataWeb.Controllers
         
         public async Task<ActionResult> Index()
         {
-            //connection string для БД с хранимкой
-            string connectionString = "Server=DESKTOP-IGTK1UR;Database=Report;Trusted_Connection=True;TrustServerCertificate=true;";
-            string destinationConnectionString = "Server=DESKTOP-IGTK1UR;Database=SPParameters;Trusted_Connection=True;TrustServerCertificate=true;";
-            var reportResults = new List<SPModel>();
+            // Получить результаты хранимки используя FromSqlInterpolated 
+            var year = 0;
+            var dt = new DateTime(2018, 1, 1);
 
-            using (var sourceDbContext = new SourceDBContext(connectionString))
-            using (var destinationDbContext = new DestinationDbContext())
+            List<SPModel>  reportResults = await _sourceContext.SPModels
+                .FromSqlInterpolated($"EXEC dbo.monthReport_0007_TechnReport_BODY @dt = {dt}, @year = {year}")
+                .ToListAsync();
+
+            List<SPDest> result = reportResults.Select(x =>
             {
-                // Получить результаты хранимки используя FromSqlInterpolated 
-                var year = 0;
-                var dt = "2018.01.01";
-                reportResults = await sourceDbContext.SPModels
-                    .FromSqlInterpolated(($"EXEC dbo.monthReport_0007_TechnReport_BODY @dt='{dt}', @year={year}"))
-                    .ToListAsync();
+                return new SPDest
+                {
+                    Descr = x.Descr,
+                    sDP1 = GetDoubleValue(x.sDP1),
+                    sDP2 = GetDoubleValue(x.sDP2),
+                    sDP4 = GetDoubleValue(x.sDP4),
+                    sDP6 = GetDoubleValue(x.sDP6),
+                    sDP7 = GetDoubleValue(x.sDP7),
+                    sDP8 = GetDoubleValue(x.sDP8),
+                    sDP9 = GetDoubleValue(x.sDP9),
+                    sDP10 = GetDoubleValue(x.sDP10),
+                    sDPBegYear = GetDoubleValue(x.sDPBegYear)
+                };
+            }).ToList();
 
-                // Записать результаты в  DestinationDbContext
-                destinationDbContext.SPModels.AddRange(reportResults);
-
-                await destinationDbContext.SaveChangesAsync();
-            }
-
-            return View();
+            // Записать результаты в  DestinationDbContext
+            _destinationContext.SPDests.AddRange(result);
+            await _destinationContext.SaveChangesAsync();
+            
+            return View(result);
         }
 
         //public IActionResult Index()
@@ -109,6 +114,13 @@ namespace GetDataWeb.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private double? GetDoubleValue(string value)
+        {
+            if (!double.TryParse(value.Trim().Replace('.', ','), out double result)) return null;
+
+            return result;
         }
     }
 }

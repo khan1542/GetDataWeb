@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace GetDataWeb.Models
 {
@@ -6,15 +7,15 @@ namespace GetDataWeb.Models
     public class SPModel
     {
         public string Descr { get; set; }
-        public double sDP1 { get; set; }
-        public double sDP2 { get; set; }
-        public double sDP4 { get; set; }
-        public double sDP6 { get; set; }
-        public double sDP7 { get; set; }
-        public double sDP8 { get; set; }
-        public double sDP9 { get; set; }
-        public double sDP10 { get; set; }
-        public double sDP255 { get; set; }
-        public double sDPBegYear { get; set; }
+        public string sDP1 { get; set; }
+        public string sDP2 { get; set; }
+        public string sDP4 { get; set; }
+        public string sDP6 { get; set; }
+        public string sDP7 { get; set; }
+        public string sDP8 { get; set; }
+        public string sDP9 { get; set; }
+        public string sDP10 { get; set; }
+        public string sDP255 { get; set; }
+        public string sDPBegYear { get; set; }
     }
 }

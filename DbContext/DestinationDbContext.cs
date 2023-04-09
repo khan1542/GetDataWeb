@@ -15,11 +15,13 @@ namespace GetDataFromDBAppDbContext.Migrations
 {
     public class DestinationDbContext : DbContext
     {
-        private string destinationConnectionString;
-
         //public DbSet<Parameter> Parameters { get; set; }
         //public DbSet<ParameterValue> ParameterValues { get; set; }
-        public DbSet<SPModel> SPModels { get; set; }
-        public DestinationDbContext(DbContextOptions<DestinationDbContext> options) : base(options) { }
+
+        public DbSet<SPDest> SPDests { get; set; }
+
+        public DestinationDbContext(DbContextOptions<DestinationDbContext> options) : base(options) 
+        { 
+        }
     }
 }
