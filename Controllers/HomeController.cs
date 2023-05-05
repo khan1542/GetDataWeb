@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 using System.Data;
 using System.Diagnostics;
-using System.Reflection.Metadata;
 using System.Collections.Generic;
+using GetDataFromDBApp.Models;
 
 namespace GetDataWeb.Controllers
 {
@@ -26,34 +26,51 @@ namespace GetDataWeb.Controllers
         {
             // Получить результаты хранимки используя FromSqlInterpolated 
             var year = 0;
-            var dt = new DateTime(2018, 1, 1);
+            var dt = new DateTime(2017, 1, 1);
+
+            var parameters = await _destinationContext.Parameters.ToListAsync();
 
             List<SPModel>  reportResults = await _sourceContext.SPModels
                 .FromSqlInterpolated($"EXEC dbo.monthReport_0007_TechnReport_BODY @dt = {dt}, @year = {year}")
                 .ToListAsync();
 
-            List<SPDest> result = reportResults.Select(x =>
-            {
-                return new SPDest
-                {
-                    Descr = x.Descr,
-                    sDP1 = GetDoubleValue(x.sDP1),
-                    sDP2 = GetDoubleValue(x.sDP2),
-                    sDP4 = GetDoubleValue(x.sDP4),
-                    sDP6 = GetDoubleValue(x.sDP6),
-                    sDP7 = GetDoubleValue(x.sDP7),
-                    sDP8 = GetDoubleValue(x.sDP8),
-                    sDP9 = GetDoubleValue(x.sDP9),
-                    sDP10 = GetDoubleValue(x.sDP10),
-                    sDPBegYear = GetDoubleValue(x.sDPBegYear)
-                };
-            }).ToList();
+            var pechi = await _destinationContext.Pechi.ToListAsync();
 
-            // Записать результаты в  DestinationDbContext
-            _destinationContext.SPDests.AddRange(result);
+            foreach(var row in  reportResults)
+            {
+                var parameterName = row.Descr.TrimEnd();
+                var parameter = parameters.FirstOrDefault(x => x.Name == parameterName);
+
+                if (parameter == null)
+                {
+                    parameter = new Parameter { Name = parameterName };
+                    await _destinationContext.Parameters.AddAsync(parameter);
+                    await _destinationContext.SaveChangesAsync();
+                }
+
+                foreach(var pech in pechi)
+                {
+                    double? parameterValue = null;
+                    var value = typeof(SPModel).GetProperty("sDP" + pech.PechId.ToString())?.GetValue(row);
+
+                    if (value != null)
+                    {
+                        double.TryParse(value.ToString().Replace('.', ','), out double doubleValue);
+                        parameterValue = doubleValue;
+                    }
+
+                    await _destinationContext.ParameterValues.AddAsync(new ParameterValue
+                    {
+                        DtFirstDay = dt,
+                        ParameterId = parameter.ParameterId,
+                        PechId = pech.PechId,
+                        Value = parameterValue
+                    });
+                }
+            }
             await _destinationContext.SaveChangesAsync();
             
-            return View(result);
+            return View(reportResults);
         }
 
         //public IActionResult Index()

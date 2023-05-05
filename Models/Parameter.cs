@@ -7,9 +7,9 @@ namespace GetDataFromDBApp.Models
     public class Parameter
     {
         [Key]
-        public int ID_Parameter { get; set; }
+        public int ParameterId { get; set; }
 
-        public string ParameterName { get; set; }
+        public string Name { get; set; }
     }
 
 

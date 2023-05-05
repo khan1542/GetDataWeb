@@ -2,12 +2,12 @@
 
 namespace GetDataFromDBApp.Models
 {
-    public class Pechi
+    public class Pech
     {
         [Key]
-        public int ID_Dp { get; set; }
+        public int PechId { get; set; }
         
-        public int DpName { get; set; }
+        public string Name { get; set; }
 
     }
 }

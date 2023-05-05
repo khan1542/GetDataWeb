@@ -4,6 +4,7 @@ using GetDataFromDBAppDbContext.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GetDataWeb.Migrations
 {
     [DbContext(typeof(DestinationDbContext))]
-    partial class DestinationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230505055550_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,19 +44,19 @@ namespace GetDataWeb.Migrations
 
             modelBuilder.Entity("GetDataFromDBApp.Models.ParameterValue", b =>
                 {
-                    b.Property<int>("PechId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DtFirstDay")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ParameterId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DtFirstDay")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("PechId")
+                        .HasColumnType("int");
 
                     b.Property<double?>("Value")
                         .HasColumnType("float");
 
-                    b.HasKey("PechId", "ParameterId", "DtFirstDay");
+                    b.HasKey("DtFirstDay");
 
                     b.HasIndex("ParameterId");
 
